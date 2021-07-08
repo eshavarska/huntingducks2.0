@@ -19,10 +19,8 @@ const int WIDTH = 1280, HEIGHT = 720;
 const int DUCK_WIDTH = 100, DUCK_HEIGHT = 100;
 int duck_pos_x = 350, duck_pos_y = 350;
 
-std::string duck_img_path = "images/birds/fenix_up.png";
-std::string duck_img_path1 = "images/birds/Fenix.png";
-std::string duck_die_img_path = "images/birds/fenix_fall.png";
-
+std::string duck_img_path = "images/birds/fenix.png";
+std::string duck_die_img_path = "images/birds/phoenix_dead.png";
 std::string menu = "images/menu/menu.png";
 std::string background_img_path = "images/menu/background.png";
 std::string foreground_img_path = "images/menu/foreground.png";
@@ -43,26 +41,25 @@ Duck duck1(DUCK_WIDTH, DUCK_HEIGHT, duck_pos_x, duck_pos_y);
 Duck duck2(DUCK_WIDTH, DUCK_HEIGHT, duck_pos_x - 100, duck_pos_y - 100);
 Player player;
 
-TTF_Font *Langar;
+TTF_Font* Langar;
 
-SDL_Texture *duckTexture;
-SDL_Texture *duckTexture1;
-SDL_Texture *deadDuckTexture;
-SDL_Texture *menuTexture;
-SDL_Texture *grassTexture;
-SDL_Texture *backgroundTexture;
-SDL_Texture *zero_shell_texture;
-SDL_Texture *one_shell_texture;
-SDL_Texture *two_shell_texture;
-SDL_Texture *three_shell_texture;
-SDL_Texture *two_red_fenixes_texture;
-SDL_Texture *two_white_fenixes_texture;
-SDL_Texture *red_white_fenixes_texture;
-SDL_Texture *one_white_fenix_texture;
-SDL_Texture *one_red_fenix_texture;
-SDL_Rect *rect;
-SDL_Rect bgRect = {0, 0, 1280, 720};
-SDL_Rect grassRect = {0, 497, 1280, 223};
+SDL_Texture* duckTexture;
+SDL_Texture* deadDuckTexture;
+SDL_Texture* menuTexture;
+SDL_Texture* grassTexture;
+SDL_Texture* backgroundTexture;
+SDL_Texture* zero_shell_texture;
+SDL_Texture* one_shell_texture;
+SDL_Texture* two_shell_texture;
+SDL_Texture* three_shell_texture;
+SDL_Texture* two_red_fenixes_texture;
+SDL_Texture* two_white_fenixes_texture;
+SDL_Texture* red_white_fenixes_texture;
+SDL_Texture* one_white_fenix_texture;
+SDL_Texture* one_red_fenix_texture;
+SDL_Rect* rect;
+SDL_Rect bgRect = { 0, 0, 1280, 720 };
+SDL_Rect grassRect = { 0, 497, 1280, 223 };
 
 SDL_Rect duckFrame;
 
@@ -77,11 +74,11 @@ bool timerRunning = false;
 
 std::map<int, int> shotFenixesOnLevel;
 
-Engine *Engine::engine = nullptr;
+Engine* Engine::engine = nullptr;
 void Engine::Init()
 {
 
-	SDL_Surface *windowSurface = NULL;
+	SDL_Surface* windowSurface = NULL;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
 	{
@@ -164,10 +161,6 @@ void Engine::Init()
 
 	tmpSurface = IMG_Load(duck_img_path.c_str());
 	duckTexture = SDL_CreateTextureFromSurface(renderer, tmpSurface);
-	SDL_FreeSurface(tmpSurface);
-
-	tmpSurface = IMG_Load(duck_img_path1.c_str());
-	duckTexture1 = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
 	tmpSurface = IMG_Load(duck_die_img_path.c_str());
@@ -263,14 +256,15 @@ void Engine::Update()
 			Uint32 seconds = ticks / 50;
 			x = seconds % 11;
 
-			duckFrame = {x * 500, 0, 500, 500};
+			duckFrame = { x * 500  , 0, 500 , 500 };
 
-			if (duck1.isAlive())
-				SDL_RenderCopy(renderer, duckTexture1, &duckFrame, rect);
-			else if (duck1.isAlive() && duck1.isFlipped())
-				SDL_RenderCopyEx(renderer, duckTexture1, &duckFrame, rect, 0, nullptr, SDL_FLIP_HORIZONTAL);
-			else if (!duck1.isAlive())
-				SDL_RenderCopy(renderer, deadDuckTexture, nullptr, rect);
+			if (!duck1.isAlive()) {
+				SDL_RenderCopy(renderer, deadDuckTexture, NULL, rect);
+			}
+			else if (duck1.isFlipped())
+				SDL_RenderCopyEx(renderer, duckTexture, &duckFrame, rect, 0, NULL, SDL_FLIP_HORIZONTAL);
+			else
+				SDL_RenderCopy(renderer, duckTexture, &duckFrame, rect);
 
 			SDL_RenderCopy(renderer, grassTexture, nullptr, &grassRect);
 
@@ -313,6 +307,9 @@ void Engine::Update()
 				cleanupBetweenLevels();
 			}
 			//Mix_PlayChannel( -1, fly_in, 0 );
+			srand((unsigned)(time(0)));
+			duck1.move();
+			rect = duck1.getRect();
 
 			int x = 0;
 
@@ -320,30 +317,28 @@ void Engine::Update()
 			Uint32 seconds = ticks / 50;
 			x = seconds % 11;
 
-			duckFrame = {x * 500, 0, 500, 500};
-
-			srand((unsigned)(time(0)));
-			duck1.move();
-			rect = duck1.getRect();
-			
-			if (duck1.isAlive())
-				SDL_RenderCopy(renderer, duckTexture1, &duckFrame, rect);
-			else if (duck1.isAlive() && duck1.isFlipped())
-				SDL_RenderCopyEx(renderer, duckTexture1, &duckFrame, rect, 0, nullptr, SDL_FLIP_HORIZONTAL);
-			else if (!duck1.isAlive())
-				SDL_RenderCopy(renderer, deadDuckTexture, nullptr, rect);
+			duckFrame = { x * 500  , 0, 500 , 500 };
+			if (!duck1.isAlive()) {
+				SDL_RenderCopy(renderer, deadDuckTexture, NULL, rect);
+			}
+			else if (duck1.isFlipped())
+				SDL_RenderCopyEx(renderer, duckTexture, &duckFrame, rect, 0, NULL, SDL_FLIP_HORIZONTAL);
+			else
+				SDL_RenderCopy(renderer, duckTexture, &duckFrame, rect);
 
 			//Mix_PlayChannel( -1, fly_in, 0 );
 			srand((unsigned)(time(0) + 47));
 			duck2.move();
 			rect = duck2.getRect();
 
-			if (duck2.isAlive())
-				SDL_RenderCopy(renderer, duckTexture1, &duckFrame, rect);
-			else if (duck2.isAlive() && duck2.isFlipped())
-				SDL_RenderCopyEx(renderer, duckTexture1, &duckFrame, rect, 0, nullptr, SDL_FLIP_HORIZONTAL);
-			else if (!duck2.isAlive())
-				SDL_RenderCopy(renderer, deadDuckTexture, nullptr, rect);
+			if (!duck2.isAlive()) {
+				SDL_RenderCopy(renderer, deadDuckTexture, NULL, rect);
+			}
+			else if (duck2.isFlipped())
+				SDL_RenderCopyEx(renderer, duckTexture, &duckFrame, rect, 0, NULL, SDL_FLIP_HORIZONTAL);
+			else
+				SDL_RenderCopy(renderer, duckTexture, &duckFrame, rect);
+
 
 			SDL_RenderCopy(renderer, grassTexture, nullptr, &grassRect);
 
@@ -435,7 +430,7 @@ void Engine::handleInGameEvents()
 
 void Engine::renderAmmo()
 {
-	SDL_Rect tempRect = {44, 635, 124, 75};
+	SDL_Rect tempRect = { 44, 635, 124, 75 };
 	rect = &tempRect;
 	switch (ammoCount)
 	{
@@ -515,7 +510,7 @@ void Engine::renderFenixesOnXPos(int xPos, int count, char game)
 {
 	if (game == 'A')
 	{
-		SDL_Rect tempRect = {xPos, 640, 62, 64};
+		SDL_Rect tempRect = { xPos, 640, 62, 64 };
 		rect = &tempRect;
 		switch (count)
 		{
@@ -529,7 +524,7 @@ void Engine::renderFenixesOnXPos(int xPos, int count, char game)
 	}
 	else if (game == 'B')
 	{
-		SDL_Rect tempRect = {xPos, 640, 124, 64};
+		SDL_Rect tempRect = { xPos, 640, 124, 64 };
 		rect = &tempRect;
 		switch (count)
 		{
@@ -549,7 +544,6 @@ void Engine::renderFenixesOnXPos(int xPos, int count, char game)
 void Engine::cleanupBetweenGames()
 {
 	levelCount = 1;
-	score = 0;
 	isGameStarted = false;
 	gameA = gameB = false;
 	clearFenixMap();
@@ -600,11 +594,11 @@ void Engine::renderScore()
 	ss << std::setw(4) << std::setfill('0') << score;
 	std::string s = ss.str();
 
-	SDL_Surface *tempSurface = TTF_RenderText_Solid(Langar, s.c_str(), {255, 255, 255});
-	SDL_Texture *tempTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+	SDL_Surface* tempSurface = TTF_RenderText_Solid(Langar, s.c_str(), { 255, 255, 255 });
+	SDL_Texture* tempTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
 	if (!tempSurface)
 		std::cout << TTF_GetError() << std::endl;
-	SDL_Rect tempRect = {1110, 640, 110, 70};
+	SDL_Rect tempRect = { 1110, 640, 110, 70 };
 	SDL_RenderCopy(renderer, tempTexture, nullptr, &tempRect);
 	SDL_FreeSurface(tempSurface);
 	SDL_DestroyTexture(tempTexture);

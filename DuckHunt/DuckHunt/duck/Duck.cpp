@@ -1,7 +1,6 @@
-#include "Duck.h"
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <duck/Duck.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #include <stdlib.h>
 #include <iostream>
 #include <string>
@@ -133,10 +132,6 @@ int Duck::getY()
 bool Duck::isAlive()
 {
 	return alive;
-}
-
-bool Duck::isFlipped() {
-	return flipped;
 }
 
 bool Duck::die() 

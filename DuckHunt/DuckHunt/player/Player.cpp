@@ -1,7 +1,7 @@
-#include <Player.h>
+#include <player/Player.h>
 #include <bridge.h>
-#include <Duck.h>
-#include <SDL2/SDL.h>
+#include <duck/Duck.h>
+#include <SDL.h>
 #include <SDL_mixer.h>
 #include <iostream>
 
